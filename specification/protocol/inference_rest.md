@@ -1,0 +1,367 @@
+## HTTP/REST
+
+The HTTP/REST API uses JSON because it is widely supported and
+language independent. In all JSON schemas shown in this document
+$number, $string, $boolean, $object and $array refer to the
+fundamental JSON types. #optional indicates an optional JSON field.
+
+See also: The HTTP/REST endpoints are defined in [rest_predict_v2.yaml](https://github.com/kserve/kserve/blob/master/docs/predict-api/v2/rest_predict_v2.yaml)
+
+| API  | Verb | Path | Request Payload | Response Payload | 
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| Inference | POST | v2/models/<model_name>[/versions/\<model_version\>]/infer | [$inference_request](#inference-request-json-object) | [$inference_response](#inference-response-json-object) |
+| Model Metadata | GET | v2/models/\<model_name\>[/versions/\<model_version\>] | | [$metadata_model_response](#model-metadata-response-json-object) | 
+| Server Ready | GET | v2/health/ready | | [$ready_server_response](#server-ready-response-json-object) | 
+| Server Live | GET | v2/health/live | | [$live_server_response](#server-live-response-json-objet)| 
+| Server Metadata | GET | v2 | | [$metadata_server_response](#server-metadata-response-json-object) |
+| Model Ready| GET   | v2/models/\<model_name\>[/versions/<model_version>]/ready |  | [$ready_model_response](#model-ready-response-json-object) |
+
+** path contents in `[]` are optional
+
+For more information regarding payload contents, see `Payload Contents`.
+
+The versions portion of the `Path` URLs (in `[]`) is shown as **optional** to allow implementations that don’t support versioning or for cases when the user does not want to specify a specific model version (in which case the server will choose a version based on its own policies).
+For example, if a model does not implement a version, the Model Metadata request path could look like `v2/model/my_model`. If the model has been configured to implement a version, the request path could look something like `v2/models/my_model/versions/v10`, where the version of the model is v10.
+
+<!-- // TODO: add example with -d inputs. -->
+
+### **API Definitions**
+
+| API  | Definition | 
+| --- | --- |
+| Inference | The `/infer` endpoint performs inference on a model. The response is the prediction result.| 
+| Model Metadata | The "model metadata" API is a per-model endpoint that returns details about the model passed in the path. | 
+| Server Ready | The “server ready” health API indicates if all the models are ready for inferencing. The “server ready” health API can be used directly to implement the Kubernetes readinessProbe |
+| Server Live | The “server live” health API indicates if the inference server is able to receive and respond to metadata and inference requests. The “server live” API can be used directly to implement the Kubernetes livenessProbe. |
+| Server Metadata | The "server metadata" API returns details describing the server. | 
+| Model Ready | The “model ready” health API indicates if a specific model is ready for inferencing. The model name and (optionally) version must be available in the URL. |
+
+### Health/Readiness/Liveness Probes
+
+The Model Readiness probe the question "Did the model download and is it able to serve requests?" and responds with the available model name(s). The Server Readiness/Liveness probes answer the question "Is my service and its infrastructure running, healthy, and able to receive and process requests?"
+
+To read more about liveness and readiness probe concepts, visit the [Configure Liveness, Readiness and Startup Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
+Kubernetes documentation.
+
+### **Payload Contents**
+
+### **Model Ready**
+
+The model ready endpoint returns the readiness probe response for the server along with the name of the model.
+
+#### Model Ready Response JSON Object
+
+
+    $ready_model_response =
+    {
+      "name" : $string,
+      "ready": $bool
+    }
+
+
+### Server Ready
+
+The server ready endpoint returns the readiness probe response for the server.
+
+#### Server Ready Response JSON Object
+
+    $ready_server_response =
+    {
+      "live" : $bool,
+    }
+
+---
+
+### Server Live
+
+The server live endpoint returns the liveness probe response for the server.
+
+#### Server Live Response JSON Objet
+
+    $live_server_response =
+    {
+      "live" : $bool,
+    }
+
+---
+
+### Server Metadata
+
+The server metadata endpoint provides information about the server. A
+server metadata request is made with an HTTP GET to a server metadata
+endpoint. In the corresponding response the HTTP body contains the
+[Server Metadata Response JSON Object](#server-metadata-response-json-object)
+or the
+[Server Metadata Response JSON Error Object](#server-metadata-response-json-error-object).
+
+#### Server Metadata Response JSON Object
+
+A successful server metadata request is indicated by a 200 HTTP status
+code. The server metadata response object, identified as
+*$metadata_server_response*, is returned in the HTTP body.
+
+    $metadata_server_response =
+    {
+      "name" : $string,
+      "version" : $string,
+      "extensions" : [ $string, ... ]
+    }
+
+* “name” : A descriptive name for the server.
+* "version" : The server version.
+* “extensions” : The extensions supported by the server. Currently, no standard extensions are defined. Individual inference servers may define and document their own extensions.
+
+
+#### Server Metadata Response JSON Error Object
+
+A failed server metadata request must be indicated by an HTTP error
+status (typically 400). The HTTP body must contain the
+*$metadata_server_error_response* object.
+
+    $metadata_server_error_response =
+    {
+      "error": $string
+    }
+
+* “error” : The descriptive message for the error.
+
+
+The per-model metadata endpoint provides information about a model. A model metadata request is made with an HTTP GET to a model metadata endpoint. In the corresponding response the HTTP body contains the [Model Metadata Response JSON Object](#model-metadata-response-json-object) or the [Model Metadata Response JSON Error Object](#model-metadata-response-json-error-object).
+The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies or return an error.
+
+---
+
+### Model Metadata
+
+The per-model metadata endpoint provides information about a model. A
+model metadata request is made with an HTTP GET to a model metadata
+endpoint. In the corresponding response the HTTP body contains the
+[Model Metadata Response JSON Object](#model-metadata-response-json-object)
+or the
+[Model Metadata Response JSON Error Object](#model-metadata-response-json-error-object).
+The model name and (optionally) version must be available in the
+URL. If a version is not provided the server may choose a version
+based on its own policies or return an error.
+
+#### Model Metadata Response JSON Object
+
+A successful model metadata request is indicated by a 200 HTTP status
+code. The metadata response object, identified as
+*$metadata_model_response*, is returned in the HTTP body for every
+successful model metadata request.
+
+    $metadata_model_response =
+    {
+      "name" : $string,
+      "versions" : [ $string, ... ] #optional,
+      "platform" : $string,
+      "inputs" : [ $metadata_tensor, ... ],
+      "outputs" : [ $metadata_tensor, ... ]
+    }
+
+* “name” : The name of the model.
+* "versions" : The model versions that may be explicitly requested via
+  the appropriate endpoint. Optional for servers that don’t support
+  versions. Optional for models that don’t allow a version to be
+  explicitly requested.
+* “platform” : The framework/backend for the model. See
+  [Platforms](#platforms).
+* “inputs” : The inputs required by the model.
+* “outputs” : The outputs produced by the model.
+
+Each model input and output tensors’ metadata is described with a
+*$metadata_tensor object*.
+
+    $metadata_tensor =
+    {
+      "name" : $string,
+      "datatype" : $string,
+      "shape" : [ $number, ... ]
+    }
+
+* “name” : The name of the tensor.
+* "datatype" : The data-type of the tensor elements as defined in
+  [Tensor Data Types](#tensor-data-types).
+* "shape" : The shape of the tensor. Variable-size dimensions are
+  specified as -1.
+
+#### Model Metadata Response JSON Error Object
+
+A failed model metadata request must be indicated by an HTTP error
+status (typically 400). The HTTP body must contain the
+*$metadata_model_error_response* object.
+
+    $metadata_model_error_response =
+    {
+      "error": $string
+    }
+
+* “error” : The descriptive message for the error.
+
+---
+
+### Inference
+
+An inference request is made with an HTTP POST to an inference
+endpoint. In the request the HTTP body contains the
+[Inference Request JSON Object](#inference-request-json-object). In
+the corresponding response the HTTP body contains the
+[Inference Response JSON Object](#inference-response-json-object) or
+[Inference Response JSON Error Object](#inference-response-json-error-object). See
+[Inference Request Examples](#inference-request-examples) for some
+example HTTP/REST requests and responses.
+
+#### Inference Request JSON Object
+
+The inference request object, identified as *$inference_request*, is
+required in the HTTP body of the POST request. The model name and
+(optionally) version must be available in the URL. If a version is not
+provided the server may choose a version based on its own policies or
+return an error.
+
+    $inference_request =
+    {
+      "id" : $string #optional,
+      "parameters" : $parameters #optional,
+      "inputs" : [ $request_input, ... ],
+      "outputs" : [ $request_output, ... ] #optional
+    }
+
+* "id" : An identifier for this request. Optional, but if specified
+  this identifier must be returned in the response.
+* "parameters" : An object containing zero or more parameters for this
+  inference request expressed as key/value pairs. See
+  [Parameters](#parameters) for more information.
+* "inputs" : The input tensors. Each input is described using the
+  *$request_input* schema defined in [Request Input](#inference_request-input).
+* "outputs" : The output tensors requested for this inference. Each
+  requested output is described using the *$request_output* schema
+  defined in [Request Output](#inference_request-output). Optional, if not
+  specified all outputs produced by the model will be returned using
+  default *$request_output* settings.
+
+##### Request Input
+
+The *$inference_request_input* JSON describes an input to the model. If the
+input is batched, the shape and data must represent the full shape and
+contents of the entire batch.
+
+    $inference_request_input =
+    {
+      "name" : $string,
+      "shape" : [ $number, ... ],
+      "datatype"  : $string,
+      "parameters" : $parameters #optional,
+      "data" : $tensor_data
+    }
+
+* "name" : The name of the input tensor.
+* "shape" : The shape of the input tensor. Each dimension must be an
+  integer representable as an unsigned 64-bit integer value.
+* "datatype" : The data-type of the input tensor elements as defined
+  in [Tensor Data Types](#tensor-data-types).
+* "parameters" : An object containing zero or more parameters for this
+  input expressed as key/value pairs. See [Parameters](#parameters)
+  for more information.
+* “data”: The contents of the tensor. See [Tensor Data](#tensor-data)
+  for more information.
+
+##### Request Output
+
+The *$request_output* JSON is used to request which output tensors
+should be returned from the model.
+
+    $inference_request_output =
+    {
+      "name" : $string,
+      "parameters" : $parameters #optional,
+    }
+
+* "name" : The name of the output tensor.
+* "parameters" : An object containing zero or more parameters for this
+  output expressed as key/value pairs. See [Parameters](#parameters)
+  for more information.
+
+#### Inference Response JSON Object
+
+A successful inference request is indicated by a 200 HTTP status
+code. The inference response object, identified as
+*$inference_response*, is returned in the HTTP body.
+
+    $inference_response =
+    {
+      "model_name" : $string,
+      "model_version" : $string #optional,
+      "id" : $string,
+      "parameters" : $parameters #optional,
+      "outputs" : [ $response_output, ... ]
+    }
+
+* "model_name" : The name of the model used for inference.
+* "model_version" : The specific model version used for
+  inference. Inference servers that do not implement versioning should
+  not provide this field in the response.
+* "id" : The "id" identifier given in the request, if any.
+* "parameters" : An object containing zero or more parameters for this
+  response expressed as key/value pairs. See [Parameters](#parameters)
+  for more information.
+* "outputs" : The output tensors. Each output is described using the
+  $response_output schema defined in
+  [Response Output](#response-output).
+
+---
+
+
+### **Inference Request Examples**
+
+### Inference Request Examples
+
+The following example shows an inference request to a model with two
+inputs and one output. The HTTP Content-Length header gives the size
+of the JSON object.
+
+    POST /v2/models/mymodel/infer HTTP/1.1
+    Host: localhost:8000
+    Content-Type: application/json
+    Content-Length: <xx>
+    {
+      "id" : "42",
+      "inputs" : [
+        {
+          "name" : "input0",
+          "shape" : [ 2, 2 ],
+          "datatype" : "UINT32",
+          "data" : [ 1, 2, 3, 4 ]
+        },
+        {
+          "name" : "input1",
+          "shape" : [ 3 ],
+          "datatype" : "BOOL",
+          "data" : [ true ]
+        }
+      ],
+      "outputs" : [
+        {
+          "name" : "output0"
+        }
+      ]
+    }
+
+For the above request the inference server must return the “output0”
+output tensor. Assuming the model returns a [ 3, 2 ] tensor of data
+type FP32 the following response would be returned.
+
+    HTTP/1.1 200 OK
+    Content-Type: application/json
+    Content-Length: <yy>
+    {
+      "id" : "42"
+      "outputs" : [
+        {
+          "name" : "output0",
+          "shape" : [ 3, 2 ],
+          "datatype"  : "FP32",
+          "data" : [ 1.0, 1.1, 2.0, 2.1, 3.0, 3.1 ]
+        }
+      ]
+    }
