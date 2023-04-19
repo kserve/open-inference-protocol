@@ -125,10 +125,6 @@ status (typically 400). The HTTP body must contain the
 
 * “error” : The descriptive message for the error.
 
-
-The per-model metadata endpoint provides information about a model. A model metadata request is made with an HTTP GET to a model metadata endpoint. In the corresponding response the HTTP body contains the [Model Metadata Response JSON Object](#model-metadata-response-json-object) or the [Model Metadata Response JSON Error Object](#model-metadata-response-json-error-object).
-The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies or return an error.
-
 ---
 
 ### Model Metadata
