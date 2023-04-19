@@ -4,6 +4,7 @@ The HTTP/REST API uses JSON because it is widely supported and
 language independent. In all JSON schemas shown in this document
 $number, $string, $boolean, $object and $array refer to the
 fundamental JSON types. #optional indicates an optional JSON field.
+Inference Request Examples
 
 See also: The HTTP/REST endpoints are defined in [rest_predict_v2.yaml](https://github.com/kserve/kserve/blob/master/docs/predict-api/v2/rest_predict_v2.yaml)
 
@@ -259,7 +260,7 @@ contents of the entire batch.
 * "parameters" : An object containing zero or more parameters for this
   input expressed as key/value pairs. See [Parameters](#parameters)
   for more information.
-* “data”: The contents of the tensor. See [Tensor Data](#tensor-data)
+* "data": The contents of the tensor. See [Tensor Data](#tensor-data)
   for more information.
 
 ##### Request Output
@@ -305,12 +306,57 @@ code. The inference response object, identified as
   $response_output schema defined in
   [Response Output](#response-output).
 
+### Parameters
+
+The *$parameters* JSON describes zero or more “name”/”value” pairs,
+where the “name” is the name of the parameter and the “value” is a
+$string, $number, or $boolean.
+
+    $parameters =
+    {
+      $parameter, ...
+    }
+
+    $parameter = $string : $string | $number | $boolean
+
+Currently no parameters are defined. As required a future proposal may
+define one or more standard parameters to allow portable functionality
+across different inference servers. A server can implement
+server-specific parameters to provide non-standard capabilities.
+
+### Tensor Data
+
+Tensor data must be presented in row-major order of the tensor
+elements. Element values must be given in "linear" order without any
+stride or padding between elements. Tensor elements may be presented
+in their nature multi-dimensional representation, or as a flattened
+one-dimensional representation.
+
+Tensor data given explicitly is provided in a JSON array. Each element
+of the array may be an integer, floating-point number, string or
+boolean value. The server can decide to coerce each element to the
+required type or return an error if an unexpected value is
+received. Note that fp16 and bf16 are problematic to communicate explicitly
+since there is not a standard fp16/bf16 representation across backends nor
+typically the programmatic support to create the fp16/bf16 representation
+for a JSON number.
+
+For example, the 2-dimensional matrix:
+
+    [ 1 2
+      4 5 ]
+
+Can be represented in its natural format as:
+
+    "data" : [ [ 1, 2 ], [ 4, 5 ] ]
+
+Or in a flattened one-dimensional representation:
+
+    "data" : [ 1, 2, 4, 5 ]
 ---
 
 
 ### **Inference Request Examples**
-
-### Inference Request Examples
 
 The following example shows an inference request to a model with two
 inputs and one output. The HTTP Content-Length header gives the size
