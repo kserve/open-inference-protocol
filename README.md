@@ -1,6 +1,10 @@
 # Open Inference Protocol Specification 
 
-The Open Inference Protocol specification describes the cross machine learning model serving runtime inference requirements and expectations for all implementations.
+The Open Inference Protocol(OIP) specification defines a standard protocol for performing machine learning model inference across
+serving runtimes for different ML frameworks. The protocol facilitates the implementation of a standardized and high performance data plane,
+promoting interoperability among model serving runtimes. The specification enables the creation of cohesive inference experience, 
+enpowering the development of versatile client or benchmarking tools that can work with all
+supported serving runtimes.
 
 - The inference REST [specification](./specification/protocol/inference_rest.md)
 - The inference gRPC [specification](./specification/protocol/inference_grpc.md)
@@ -19,4 +23,3 @@ Changes to the specification are versioned according to Semantic Versioning 2.0 
 
 ## License
 By contributing to Open Inference Protocol Specification repository, you agree that your contributions will be licensed under its Apache 2.0 License.
-
