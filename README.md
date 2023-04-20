@@ -12,7 +12,8 @@ supported serving runtimes.
 ## Adoptions
 - KServe [v2 inference protocol](https://kserve.github.io/website/master/modelserving/data_plane/v2_protocol/)
 - NVIDIA [Triton inference server protocol](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/customization_guide/inference_protocols.html)
-- Seldon [MLServer v2 inference protocol](https://docs.seldon.io/projects/seldon-core/en/latest/reference/apis/v2-protocol.html)
+- Seldon [MLServer](https://mlserver.readthedocs.io/en/stable/user-guide/content-type.html)
+- Seldon Core [v2 inference protocol](https://docs.seldon.io/projects/seldon-core/en/v2/contents/getting-started/#api-for-inference)
 - OpenVino [RESTful API](https://docs.openvino.ai/latest/ovms_docs_rest_api_kfs.html) and [gRPC API](https://docs.openvino.ai/latest/ovms_docs_grpc_api_kfs.html)
 - AMD [Inference Server](https://xilinx.github.io/inference-server/main/kserve.html)
 - TorchServe [Inference API](https://github.com/pytorch/serve/tree/master/kubernetes/kserve)

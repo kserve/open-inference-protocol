@@ -39,7 +39,7 @@ For example, if a model does not implement a version, the Model Metadata request
 
 ### Health/Readiness/Liveness Probes
 
-The Model Readiness probe the question "Did the model download and is it able to serve requests?" and responds with the available model name(s). The Server Readiness/Liveness probes answer the question "Is my service and its infrastructure running, healthy, and able to receive and process requests?"
+The Model Readiness probe the question "Was the model successfully downloaded and loaded onto the server to be able to run inference requests?" and responds with the available model name(s). The Server Readiness/Liveness probes answer the question "Is my service and its infrastructure running, healthy, and able to receive and process requests?"
 
 To read more about liveness and readiness probe concepts, visit the [Configure Liveness, Readiness and Startup Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
 Kubernetes documentation.
