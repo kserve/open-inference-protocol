@@ -127,6 +127,23 @@ status (typically 400). The HTTP body must contain the
 * “error” : The descriptive message for the error.
 
 ---
+### Platforms
+
+A platform is a string indicating a DL/ML framework or
+backend. Platform is returned as part of the response to a
+[Model Metadata](#model-metadata) request but is information only. The
+proposed inference APIs are generic relative to the DL/ML framework
+used by a model and so a client does not need to know the platform of
+a given model to use the API. Platform names use the format
+“<project>_<format>”. The following platform names are allowed:
+
+* tensorrt_plan : A TensorRT model encoded as a serialized engine or “plan”.
+* tensorflow_graphdef : A TensorFlow model encoded as a GraphDef.
+* tensorflow_savedmodel : A TensorFlow model encoded as a SavedModel.
+* onnx_onnxv1 : A ONNX model encoded for ONNX Runtime.
+* pytorch_torchscript : A PyTorch model encoded as TorchScript.
+* mxnet_mxnet: An MXNet model
+* caffe2_netdef : A Caffe2 model encoded as a NetDef.
 
 ### Model Metadata
 
@@ -230,10 +247,10 @@ return an error.
   inference request expressed as key/value pairs. See
   [Parameters](#parameters) for more information.
 * "inputs" : The input tensors. Each input is described using the
-  *$request_input* schema defined in [Request Input](#inference_request-input).
+  *$request_input* schema defined in [Request Input](#request-input).
 * "outputs" : The output tensors requested for this inference. Each
   requested output is described using the *$request_output* schema
-  defined in [Request Output](#inference_request-output). Optional, if not
+  defined in [Request Output](#request-output). Optional, if not
   specified all outputs produced by the model will be returned using
   default *$request_output* settings.
 
@@ -306,6 +323,45 @@ code. The inference response object, identified as
   $response_output schema defined in
   [Response Output](#response-output).
 
+##### Response Output
+
+The *$response_output* JSON describes an output from the model. If the
+output is batched, the shape and data represents the full shape of the
+entire batch.
+
+    $response_output =
+    {
+      "name" : $string,
+      "shape" : [ $number, ... ],
+      "datatype"  : $string,
+      "parameters" : $parameters #optional,
+      "data" : $tensor_data
+    }
+
+* "name" : The name of the output tensor.
+* "shape" : The shape of the output tensor. Each dimension must be an
+  integer representable as an unsigned 64-bit integer value.
+* "datatype" : The data-type of the output tensor elements as defined
+  in [Tensor Data Types](#tensor-data-types).
+* "parameters" : An object containing zero or more parameters for this
+  input expressed as key/value pairs. See [Parameters](#parameters)
+  for more information.
+* “data”: The contents of the tensor. See [Tensor Data](#tensor-data)
+  for more information.
+
+#### Inference Response JSON Error Object
+
+A failed inference request must be indicated by an HTTP error status
+(typically 400). The HTTP body must contain the
+*$inference_error_response* object.
+
+    $inference_error_response =
+    {
+      "error": <error message string>
+    }
+
+* “error” : The descriptive message for the error.
+
 ### Parameters
 
 The *$parameters* JSON describes zero or more “name”/”value” pairs,
@@ -353,6 +409,28 @@ Can be represented in its natural format as:
 Or in a flattened one-dimensional representation:
 
     "data" : [ 1, 2, 4, 5 ]
+
+#### Tensor Data Types
+
+Tensor data types are shown in the following table along with the size
+of each type, in bytes.
+
+
+| Data Type | Size (bytes) |
+| --------- | ------------ |
+| BOOL      | 1            |
+| UINT8     | 1            |
+| UINT16    | 2            |
+| UINT32    | 4            |
+| UINT64    | 8            |
+| INT8      | 1            |
+| INT16     | 2            |
+| INT32     | 4            |
+| INT64     | 8            |
+| FP16      | 2            |
+| FP32      | 4            |
+| FP64      | 8            |
+| BYTES     | Variable (max 2<sup>32</sup>) |
 ---
 
 

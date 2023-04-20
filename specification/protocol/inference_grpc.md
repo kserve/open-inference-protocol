@@ -1,25 +1,24 @@
 ## gRPC
 
 The GRPC API closely follows the concepts defined in the
-[HTTP/REST](#httprest) API. A compliant server must implement the
+[HTTP/REST](./inference_rest.md) API. A compliant server must implement the
 health, metadata, and inference APIs described in this section.
 
 
 | API  | rpc Endpoint | Request Message | Response Message | 
 | --- | --- | --- | ---| 
 | Inference | [ModelInfer](#inference) | ModelInferRequest | ModelInferResponse | 
-| Model Ready | [ModelReady](#model-ready) | [ModelReadyRequest] | ModelReadyResponse |
+| Model Ready | [ModelReady](#model-ready) | ModelReadyRequest | ModelReadyResponse |
 | Model Metadata | [ModelMetadata](#model-metadata)| ModelMetadataRequest | ModelMetadataResponse | 
 | Server Ready | [ServerReady](#server-ready) | ServerReadyRequest | ServerReadyResponse |
 | Server Live | [ServerLive](#server-live) | ServerLiveRequest | ServerLiveResponse | 
 
 For more detailed information on each endpoint and its contents, see `API Definitions` and `Message Contents`.
 
-See also: The gRPC endpoints, request/response messages and contents are defined in [grpc_predict_v2.proto](https://github.com/kserve/kserve/blob/master/docs/predict-api/v2/grpc_predict_v2.proto)
+See also: The gRPC endpoints, request/response messages and contents are defined in [grpc_predict_v2.proto](./open_inference_grpc.proto)
 
 
-### **API Definitions** 
-
+### **API Definitions**
 
 The GRPC definition of the service is:
 
