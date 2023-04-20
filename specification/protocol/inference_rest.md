@@ -6,7 +6,7 @@ $number, $string, $boolean, $object and $array refer to the
 fundamental JSON types. #optional indicates an optional JSON field.
 Inference Request Examples
 
-See also: The HTTP/REST endpoints are defined in [rest_predict_v2.yaml](https://github.com/kserve/kserve/blob/master/docs/predict-api/v2/rest_predict_v2.yaml)
+See also: The HTTP/REST endpoints are defined in [open_inference_rest.yaml](./open_inference_rest.yaml)
 
 | API  | Verb | Path | Request Payload | Response Payload | 
 | ------------- | ------------- | ------------- | ------------- | ------------- |
@@ -127,23 +127,6 @@ status (typically 400). The HTTP body must contain the
 * “error” : The descriptive message for the error.
 
 ---
-### Platforms
-
-A platform is a string indicating a DL/ML framework or
-backend. Platform is returned as part of the response to a
-[Model Metadata](#model-metadata) request but is information only. The
-proposed inference APIs are generic relative to the DL/ML framework
-used by a model and so a client does not need to know the platform of
-a given model to use the API. Platform names use the format
-“<project>_<format>”. The following platform names are allowed:
-
-* tensorrt_plan : A TensorRT model encoded as a serialized engine or “plan”.
-* tensorflow_graphdef : A TensorFlow model encoded as a GraphDef.
-* tensorflow_savedmodel : A TensorFlow model encoded as a SavedModel.
-* onnx_onnxv1 : A ONNX model encoded for ONNX Runtime.
-* pytorch_torchscript : A PyTorch model encoded as TorchScript.
-* mxnet_mxnet: An MXNet model
-* caffe2_netdef : A Caffe2 model encoded as a NetDef.
 
 ### Model Metadata
 
@@ -212,6 +195,23 @@ status (typically 400). The HTTP body must contain the
 
 * “error” : The descriptive message for the error.
 
+#### Platforms
+
+A platform is a string indicating a DL/ML framework or
+backend. Platform is returned as part of the response to a
+[Model Metadata](#model-metadata) request but is information only. The
+proposed inference APIs are generic relative to the DL/ML framework
+used by a model and so a client does not need to know the platform of
+a given model to use the API. Platform names use the format
+“<project>_<format>”. The following platform names are allowed:
+
+* tensorrt_plan : A TensorRT model encoded as a serialized engine or “plan”.
+* tensorflow_graphdef : A TensorFlow model encoded as a GraphDef.
+* tensorflow_savedmodel : A TensorFlow model encoded as a SavedModel.
+* onnx_onnxv1 : A ONNX model encoded for ONNX Runtime.
+* pytorch_torchscript : A PyTorch model encoded as TorchScript.
+* mxnet_mxnet: An MXNet model
+* caffe2_netdef : A Caffe2 model encoded as a NetDef.
 ---
 
 ### Inference
@@ -362,7 +362,7 @@ A failed inference request must be indicated by an HTTP error status
 
 * “error” : The descriptive message for the error.
 
-### Parameters
+#### Parameters
 
 The *$parameters* JSON describes zero or more “name”/”value” pairs,
 where the “name” is the name of the parameter and the “value” is a

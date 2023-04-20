@@ -15,7 +15,7 @@ health, metadata, and inference APIs described in this section.
 
 For more detailed information on each endpoint and its contents, see `API Definitions` and `Message Contents`.
 
-See also: The gRPC endpoints, request/response messages and contents are defined in [grpc_predict_v2.proto](./open_inference_grpc.proto)
+See also: The gRPC endpoints, request/response messages and contents are defined in [open_inference_grpc.proto](./open_inference_grpc.proto)
 
 
 ### **API Definitions**
