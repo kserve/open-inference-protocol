@@ -130,6 +130,9 @@ message ModelMetadataResponse
 
   // The model's outputs.
   repeated TensorMetadata outputs = 5;
+
+  // Optional Model Properties
+  map<string, string> properties = 6;
 }
 
 message ModelInferRequest
