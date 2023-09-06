@@ -274,6 +274,12 @@ message InferParameter
 
     // A string parameter value.
     string string_param = 3;
+
+    // A double parameter value.
+    double double_param = 4;
+
+    // A uint64 parameter value.
+    uint64 uint64_param = 5;
   }
 }
 
