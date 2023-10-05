@@ -3,6 +3,9 @@
 You can find the meeting minutes from the monthly work group sessions in this [Google Doc](https://docs.google.com/document/d/1f21bja1ejHPrZRmY5ke0UxKVD26j0VntJxx0qGN3fKE). Use the links below to jump to the notes from a particular meeting.
 
 
+## 10/04/2023
+- [Notes](https://docs.google.com/document/d/1f21bja1ejHPrZRmY5ke0UxKVD26j0VntJxx0qGN3fKE/edit#heading=h.634yxromwxj6)
+
 ## 09/06/2023
 - [Notes](https://docs.google.com/document/d/1f21bja1ejHPrZRmY5ke0UxKVD26j0VntJxx0qGN3fKE/edit#heading=h.he6eqblp1n0y)
 
