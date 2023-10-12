@@ -1,0 +1,32 @@
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.pyc
+*.egg-info/
+
+# Mac file system
+**/.DS_Store
+ 
+# editor and IDE paraphernalia
+.idea
+.editorconfig
+.vscode
+.project
+*.swp
+*.swo
+*~
+
+# Python dev
+.mypy_cache
+
+.gitlab-ci.yml
+.openapi-generator-ignore
+.openapi-generator/
+
+# Ignore files for MacOS
+**/.DS_Store
+
