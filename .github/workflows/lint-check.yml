@@ -17,7 +17,7 @@ jobs:
       - name: Check out source repository
         uses: actions/checkout@v3
 
-      - name: OpenAPI lint check
+      - name: Lint OpenAPI spec
         uses: nwestfall/openapi-action@v1.0.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -32,7 +32,7 @@ jobs:
       - name: Setup buf
         uses: bufbuild/buf-setup-action@v1
 
-      - name: run buf lint
+      - name: Run buf lint
         uses: bufbuild/buf-lint-action@v1
         with:
           input: ./specification/protocol
