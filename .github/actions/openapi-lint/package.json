@@ -1,0 +1,30 @@
+{
+  "name": "openapi-action",
+  "version": "1.0.1",
+  "description": "OpenAPI lint action",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "package": "ncc build index.js -o dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "authors": [
+    "Nathan Westfall",
+    "Sivanantham Chinnaiyan"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/github": "^4.0.0",
+    "@redocly/openapi-core": "^1.0.0",
+    "colorette": "^2.0.20",
+    "js-yaml": "3.14.1",
+    "yaml-ast-parser": "^0.0.43"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.0",
+    "eslint": "^7.14.0",
+    "null-loader": "^4.0.1",
+    "standard": "^16.0.3"
+  }
+}

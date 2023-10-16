@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Lint OpenAPI spec
-        uses: nwestfall/openapi-action@v1.0.2
+        uses: ./.github/actions/openapi-lint
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./specification/protocol/open_inference_rest.yaml

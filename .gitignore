@@ -27,6 +27,5 @@
 .openapi-generator-ignore
 .openapi-generator/
 
-# Ignore files for MacOS
-**/.DS_Store
-
+# node js
+**/node_modules

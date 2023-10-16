@@ -1,0 +1,24 @@
+# This file instructs Redocly's linter to ignore the rules contained for specific parts of your API.
+# See https://redoc.ly/docs/cli/ for more information.
+specification/protocol/open_inference_rest.yaml:
+  no-empty-servers:
+    - '#/servers'
+  operation-4xx-response:
+    - '#/paths/~1v2~1health~1live/get/responses'
+    - '#/paths/~1v2~1health~1ready/get/responses'
+    - >-
+      #/paths/~1v2~1models~1${MODEL_NAME}~1versions~1${MODEL_VERSION}~1ready/get/responses
+    - >-
+      #/paths/~1v2~1models~1${MODEL_NAME}~1versions~1${MODEL_VERSION}/get/responses
+  no-path-trailing-slash:
+    - '#/paths/~1v2~1'
+  no-unused-components:
+    - '#/components/schemas/metadata_model_error_response'
+  security-defined:
+    - '#/paths/~1v2~1health~1live/get'
+    - '#/paths/~1v2~1health~1ready/get'
+    - '#/paths/~1v2~1models~1${MODEL_NAME}~1versions~1${MODEL_VERSION}~1ready/get'
+    - '#/paths/~1v2~1/get'
+    - '#/paths/~1v2~1models~1${MODEL_NAME}~1versions~1${MODEL_VERSION}/get'
+    - >-
+      #/paths/~1v2~1models~1${MODEL_NAME}~1versions~1${MODEL_VERSION}~1infer/post
