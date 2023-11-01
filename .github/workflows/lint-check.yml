@@ -17,11 +17,13 @@ jobs:
       - name: Check out source repository
         uses: actions/checkout@v3
 
+      - name: Install redocly cli
+        run: |
+          npm install -g @redocly/cli@1.4.0
+
       - name: Lint OpenAPI spec
-        uses: ./.github/actions/openapi-lint
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./specification/protocol/open_inference_rest.yaml
+        run: |
+          redocly lint ./specification/protocol/open_inference_rest.yaml
 
   grpc-proto-lint:
     runs-on: ubuntu-latest
