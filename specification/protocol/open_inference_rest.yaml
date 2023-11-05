@@ -184,6 +184,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/metadata_tensor'
+        properties:
+          type: object
+          additionalProperties:
+            type: string
       required:
         - name
         - platform
