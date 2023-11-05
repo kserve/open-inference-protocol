@@ -1,0 +1,13 @@
+version: v1
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - DEFAULT
+  ignore_only:
+    PACKAGE_VERSION_SUFFIX:
+      - open_inference_grpc.proto
+    PACKAGE_DIRECTORY_MATCH:
+      - open_inference_grpc.proto
+  allow_comment_ignores: true

@@ -1,0 +1,40 @@
+name: "OpenApi lint"
+
+on:
+  push:
+    branches: [ master, release* ]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  openapi-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v3
+
+      - name: Install redocly cli
+        run: |
+          npm install -g @redocly/cli@1.4.0
+
+      - name: Lint OpenAPI spec
+        run: |
+          redocly lint ./specification/protocol/open_inference_rest.yaml
+
+  grpc-proto-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v3
+
+      - name: Setup buf
+        uses: bufbuild/buf-setup-action@v1
+
+      - name: Run buf lint
+        uses: bufbuild/buf-lint-action@v1
+        with:
+          input: ./specification/protocol
