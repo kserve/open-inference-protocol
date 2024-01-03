@@ -39,22 +39,12 @@ components:
             minimum: 0
             maximum: 512
             description: The maximum number of tokens to generate in the completion.
-          best_of:
-            type: integer
-            format: int32
-            minimum: 0
-            description: Generates best_of completions server-side and returns the \best\ (the one with the highest log probability per token).
           stop:
             type: array
             items:
               type: string
             maxItems: 5
             description: Up to 5 sequences where the API will stop generating further tokens.
-          frequency_penalty:
-            type: number
-            format: float
-            minimum: 0
-            description: Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
     GenerateResponse:
       type: object
       required:
@@ -72,7 +62,6 @@ components:
       required:
         - text_output
         - model_name
-        - done
       properties:
         text_output:
           type: string
@@ -80,8 +69,8 @@ components:
           type: string
         model_version:
           type: string
-        done:
-          type: boolean
+        finish_reason:
+          type: string
     GenerateErrorResponse:
       type: object
       required:
