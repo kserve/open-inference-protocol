@@ -23,7 +23,7 @@ components:
           temperature:
             type: number
             format: float
-            default: null
+            default: 1
             minimum: 0
             description: What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
           top_p:
@@ -36,14 +36,13 @@ components:
             type: integer
             format: int32
             default: 20
-            minimum: 0
+            minimum: 1
             maximum: 512
             description: The maximum number of tokens to generate in the completion.
           stop:
             type: array
             items:
               type: string
-            maxItems: 5
             description: Up to 5 sequences where the API will stop generating further tokens.
     GenerateResponse:
       type: object
