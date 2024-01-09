@@ -37,7 +37,6 @@ components:
             format: int32
             default: 20
             minimum: 1
-            maximum: 512
             description: The maximum number of tokens to generate in the completion.
           stop:
             type: array
