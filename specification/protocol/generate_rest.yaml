@@ -5,6 +5,14 @@ info:
   version: 1.0.0
 components:
   schemas:
+    Details:
+      type: object
+      additionalProperties: {}
+      properties:
+        finish_reason:
+          type: string
+        logprobs:
+          $ref: '#/components/schemas/Logprobs'
     GenerateErrorResponse:
       type: object
       required:
@@ -39,6 +47,8 @@ components:
           items:
             type: string
           description: Sequences where the API will stop generating further tokens.
+        logprob:
+          type: boolean  
     GenerateRequest:
       type: object
       required: 
@@ -49,8 +59,6 @@ components:
         parameters:
           allOf: 
             - $ref: '#/components/schemas/GenerateParameters'
-        logprob:
-          type: boolean  
     GenerateResponse:
       type: object
       required:
@@ -63,8 +71,8 @@ components:
           type: string
         model_version:
           type: string
-        logprobs:
-          $ref: '#/components/schemas/Logprobs'
+        details:
+          $ref: '#/components/schemas/Details'
     GenerateStreamResponse:
       type: object
       required:
@@ -77,14 +85,20 @@ components:
           type: string
         model_version:
           type: string
-        finish_reason:
-          type: string
-        logprobs:
-          $ref: '#/components/schemas/Logprobs'
+        details:
+          $ref: '#/components/schemas/StreamDetails'
     Logprobs:
       type: array
       items:
         $ref: '#/components/schemas/Token'
+    StreamDetails:
+      type: object
+      additionalProperties: {}
+      properties:
+        finish_reason:
+          type: string
+        token:
+          $ref: '#/components/schemas/Token'
     Token:
       type: object
       required:
