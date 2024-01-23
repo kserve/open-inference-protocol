@@ -7,12 +7,22 @@ components:
   schemas:
     Details:
       type: object
+      required: 
+        - finish_reason
+        - logprobs
       additionalProperties: {}
       properties:
         finish_reason:
-          type: string
+          $ref: '#/components/schemas/Finish_Reason'
         logprobs:
           $ref: '#/components/schemas/Logprobs'
+    Finish_Reason:
+      type: string
+      enum: 
+        - length
+        - eos_token
+        - stop_sequence
+      description: The reason the model stopped generating tokens. `length` if number of generated tokens == `max_tokens`. `eos_token` if the model generated its end of sequence token and `stop_sequence` if the model generated a text included in `stop` array
     GenerateErrorResponse:
       type: object
       required:
@@ -47,8 +57,9 @@ components:
           items:
             type: string
           description: Sequences where the API will stop generating further tokens.
-        logprob:
-          type: boolean  
+        details:
+          type: boolean 
+          description: Flag to request for detailed response body that would include finish_reason and logprobs.
     GenerateRequest:
       type: object
       required: 
@@ -91,12 +102,13 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Token'
+      description: Log probability information for the tokens.
     StreamDetails:
       type: object
       additionalProperties: {}
       properties:
         finish_reason:
-          type: string
+          $ref: '#/components/schemas/Finish_Reason'
         token:
           $ref: '#/components/schemas/Token'
     Token:
@@ -111,13 +123,17 @@ components:
           type: integer
           format: int32
           minimum: 0
+          description: Id of the token.
         logprob:
           type: number
           format: float
+          description: The log probability of this token.
         special:
           type: boolean
+          description: Describes if the token is a special token. Can be used to ignore tokens when concatenating
         text:
           type: string
+          description: The token text value.
 paths:
   /v2/models/${MODEL_NAME}/versions/${MODEL_VERSION}/generate:
     post:
