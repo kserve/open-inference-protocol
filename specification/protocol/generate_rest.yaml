@@ -105,6 +105,9 @@ components:
       description: Log probability information for the tokens.
     StreamDetails:
       type: object
+      required: 
+        - finish_reason
+        - token
       additionalProperties: {}
       properties:
         finish_reason:
