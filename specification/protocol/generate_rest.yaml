@@ -1,0 +1,255 @@
+openapi: 3.1.0
+info:
+  title: Open Inference API for text generation
+  description: Open Inference API for text generation
+  version: 1.0.0
+components:
+  schemas:
+    Details:
+      type: object
+      required: 
+        - finish_reason
+        - logprobs
+      additionalProperties: {}
+      properties:
+        finish_reason:
+          $ref: '#/components/schemas/Finish_Reason'
+        logprobs:
+          $ref: '#/components/schemas/Logprobs'
+    Finish_Reason:
+      type: string
+      enum: 
+        - length
+        - eos_token
+        - stop_sequence
+      description: The reason the model stopped generating tokens. `length` if number of generated tokens == `max_tokens`. `eos_token` if the model generated its end of sequence token and `stop_sequence` if the model generated a text included in `stop` array
+    GenerateErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string  
+    GenerateParameters:
+      type: object
+      additionalProperties: {}
+      properties:
+        temperature:
+          type: number
+          format: float
+          default: 1
+          minimum: 0
+          description: What sampling temperature to use, higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+        top_p:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+          description: An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+        max_tokens:
+          type: integer
+          format: int32
+          default: 20
+          minimum: 1
+          description: The maximum number of tokens to generate in the completion.
+        stop:
+          type: array
+          items:
+            type: string
+          description: Sequences where the API will stop generating further tokens.
+        details:
+          type: boolean 
+          description: Flag to request for detailed response body that would include finish_reason and logprobs.
+    GenerateRequest:
+      type: object
+      required: 
+        - text_input
+      properties:
+        text_input:
+          type: string
+        parameters:
+          allOf: 
+            - $ref: '#/components/schemas/GenerateParameters'
+    GenerateResponse:
+      type: object
+      required:
+        - text_output
+        - model_name
+      properties:
+        text_output:
+          type: string
+        model_name:
+          type: string
+        model_version:
+          type: string
+        details:
+          $ref: '#/components/schemas/Details'
+    GenerateStreamResponse:
+      type: object
+      required:
+        - text_output
+        - model_name
+      properties:
+        text_output:
+          type: string
+        model_name:
+          type: string
+        model_version:
+          type: string
+        details:
+          $ref: '#/components/schemas/StreamDetails'
+    Logprobs:
+      type: array
+      items:
+        $ref: '#/components/schemas/Token'
+      description: Log probability information for the tokens.
+    StreamDetails:
+      type: object
+      required: 
+        - finish_reason
+        - token
+      additionalProperties: {}
+      properties:
+        finish_reason:
+          $ref: '#/components/schemas/Finish_Reason'
+        token:
+          $ref: '#/components/schemas/Token'
+    Token:
+      type: object
+      required:
+        - id
+        - text
+        - logprob
+        - special
+      properties:
+        id:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Id of the token.
+        logprob:
+          type: number
+          format: float
+          description: The log probability of this token.
+        special:
+          type: boolean
+          description: Describes if the token is a special token. Can be used to ignore tokens when concatenating
+        text:
+          type: string
+          description: The token text value.
+paths:
+  /v2/models/${MODEL_NAME}/versions/${MODEL_VERSION}/generate:
+    post:
+      parameters:
+        - name: MODEL_NAME
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: MODEL_VERSION
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateRequest'
+      responses:
+        '200':
+          description: generated text
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateResponse'
+        '422':
+          description: Input validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateErrorResponse'
+              example:
+                error: Input validation error
+        '424':
+          description: Generation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateErrorResponse'
+              example:
+                error: Request failed during generation
+        '429':
+          description: Model is overloaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateErrorResponse'
+              example:
+                error: Model is overloaded
+        '500':
+          description: Incomplete generation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateErrorResponse'
+              example:
+                error: Incomplete generation
+
+  /v2/models/${MODEL_NAME}/versions/${MODEL_VERSION}/generate_stream:
+    post:
+      parameters:
+        - name: MODEL_NAME
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: MODEL_VERSION
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateRequest'
+      responses:
+        '200':
+          description: generated text stream
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/GenerateStreamResponse'
+        '422':
+          description: Input validation error
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/GenerateErrorResponse'
+              example:
+                error: Input validation error
+        '424':
+          description: Generation Error
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/GenerateErrorResponse'
+              example:
+                error: Request failed during generation
+        '429':
+          description: Model is overloaded
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/GenerateErrorResponse'
+              example:
+                error: Model is overloaded
+        '500':
+          description: Incomplete generation
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/GenerateErrorResponse'
+              example:
+                error: Incomplete generation
